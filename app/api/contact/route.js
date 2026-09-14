@@ -37,10 +37,11 @@ function rateLimited(key) {
 
 function transportConfig() {
   const user = process.env.SMTP_USER || (CONTACT_TO.endsWith('@gmail.com') ? CONTACT_TO : '');
-  const pass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_APP_PASS;
+  const host = process.env.SMTP_HOST || DEFAULT_SMTP_HOST;
+  const rawPass = process.env.SMTP_PASS || process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_APP_PASS;
+  const pass = host === DEFAULT_SMTP_HOST ? rawPass?.replace(/\s+/g, '') : rawPass;
   if (!user || !pass) return null;
 
-  const host = process.env.SMTP_HOST || DEFAULT_SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || DEFAULT_SMTP_PORT);
   return {
     host,
