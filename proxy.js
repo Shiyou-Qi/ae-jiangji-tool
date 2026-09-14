@@ -4,8 +4,28 @@ const LANGS = new Set(['zh', 'en']);
 const CHINESE_COUNTRIES = new Set(['CN', 'HK', 'MO', 'TW']);
 const PUBLIC_FILE = /\.[a-z0-9]+$/i;
 
+const LEGACY_REDIRECTS = {
+  '/en/aep-downgrader': '/en/after-effects-downgrader',
+  '/en/ae-2026-to-2023': '/en/after-effects-downgrader/to/2023',
+  '/en/ae-2025-to-2024': '/en/after-effects-downgrader/to/2024',
+  '/en/ae-2026-to-2024': '/en/after-effects-downgrader/to/2024',
+  '/en/downgrade-after-effects-project': '/en/guide/downgrade-newer-after-effects-project',
+  '/en/open-aep-in-older-version': '/en/guide/old-adobe-version-open-project',
+  '/ae-2026-to-2023': '/after-effects-downgrader/to/2023',
+  '/aeback': '',
+};
+
+const FIXED_LEGACY_REDIRECTS = {
+  '/aep-jiangji': '/zh/after-effects-downgrader',
+};
+
 function firstSegment(pathname) {
   return pathname.split('/').filter(Boolean)[0] || '';
+}
+
+function normalizedPath(pathname) {
+  const lower = pathname.toLowerCase();
+  return lower.length > 1 ? lower.replace(/\/+$/, '') : lower;
 }
 
 function shouldSkip(pathname) {
@@ -49,6 +69,32 @@ function preferredLang(request) {
 export function proxy(request) {
   const { pathname } = request.nextUrl;
   const segment = firstSegment(pathname);
+  const normalized = normalizedPath(pathname);
+
+  const fixedLegacyTarget = FIXED_LEGACY_REDIRECTS[normalized];
+  const legacyTarget = LEGACY_REDIRECTS[normalized];
+  if (fixedLegacyTarget !== undefined || legacyTarget !== undefined) {
+    const target = fixedLegacyTarget ?? legacyTarget;
+    const targetPath =
+      target.startsWith('/zh/') || target.startsWith('/en/')
+        ? target
+        : `/${preferredLang(request)}${target}`;
+    const response = NextResponse.redirect(
+      `${request.nextUrl.origin}${targetPath}${request.nextUrl.search}`,
+      308
+    );
+    response.headers.set('Cache-Control', 'public, max-age=86400');
+    return response;
+  }
+
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    const response = NextResponse.redirect(
+      `${request.nextUrl.origin}${normalized}${request.nextUrl.search}`,
+      308
+    );
+    response.headers.set('Cache-Control', 'public, max-age=86400');
+    return response;
+  }
 
   if (LANGS.has(segment) || shouldSkip(pathname)) {
     return NextResponse.next();

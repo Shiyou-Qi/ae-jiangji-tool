@@ -252,6 +252,33 @@ for (const p of bogus) {
   check(`${p} 返回 404`, res.status === 404, `实际 ${res.status}`);
 }
 
+/* ─────────── 10. Search Console 已曝光的旧链接必须永久跳转 ─────────── */
+
+console.log('\n【10】旧链接永久跳转');
+
+const legacyRedirects = [
+  ['/en/aep-downgrader', '/en/after-effects-downgrader'],
+  ['/en/ae-2026-to-2023', '/en/after-effects-downgrader/to/2023'],
+  ['/en/ae-2025-to-2024', '/en/after-effects-downgrader/to/2024'],
+  ['/en/ae-2026-to-2024', '/en/after-effects-downgrader/to/2024'],
+  ['/en/downgrade-after-effects-project', '/en/guide/downgrade-newer-after-effects-project'],
+  ['/en/open-aep-in-older-version', '/en/guide/old-adobe-version-open-project'],
+  ['/ae-2026-to-2023', '/en/after-effects-downgrader/to/2023'],
+  ['/aeback', '/en'],
+  ['/aep-jiangji', '/zh/after-effects-downgrader'],
+];
+
+for (const [from, to] of legacyRedirects) {
+  const res = await fetch(`${SITE}${from}/`, {
+    headers: { 'accept-language': 'en-US,en;q=0.9' },
+    redirect: 'manual',
+  });
+  const location = res.headers.get('location') || '';
+  const path = location ? new URL(location, SITE).pathname : '';
+  check(`${from}/ 返回永久跳转`, [301, 308].includes(res.status), `实际 ${res.status}`);
+  check(`${from}/ 跳到新页面`, path === to, location || '(缺失)');
+}
+
 /* ─────────── 汇总 ─────────── */
 
 const total = pass + failures.length;
