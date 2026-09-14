@@ -24,6 +24,7 @@ import { OG_SIZE, SITE_URL, abs, langAlternates } from '../lib/seo.js';
 import { LANGS } from '../lib/site.js';
 
 const SITE = process.env.SITE || 'http://127.0.0.1:3100';
+const INDEXNOW_KEY = '29552bf0d56b423fabcaafa548b94fd6';
 
 let pass = 0;
 const failures = [];
@@ -278,6 +279,15 @@ for (const [from, to] of legacyRedirects) {
   check(`${from}/ 返回永久跳转`, [301, 308].includes(res.status), `实际 ${res.status}`);
   check(`${from}/ 跳到新页面`, path === to, location || '(缺失)');
 }
+
+/* ─────────── 11. IndexNow 密钥文件 ─────────── */
+
+console.log('\n【11】IndexNow');
+
+const indexNowRes = await fetch(`${SITE}/${INDEXNOW_KEY}.txt`, { cache: 'no-store' });
+const indexNowText = (await indexNowRes.text()).trim();
+check('IndexNow 密钥文件可访问', indexNowRes.status === 200, `实际 ${indexNowRes.status}`);
+check('IndexNow 密钥内容正确', indexNowText === INDEXNOW_KEY);
 
 /* ─────────── 汇总 ─────────── */
 
