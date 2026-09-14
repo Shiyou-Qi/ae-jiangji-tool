@@ -172,6 +172,14 @@ await eachLimited(EXPECTED, 6, async (path) => {
   check(`twitter:card 存在 ${path}`, html.includes('name="twitter:card"'));
   check(`og:locale 正确 ${path}`, html.includes(`content="${lang === 'zh' ? 'zh_CN' : 'en_US'}"`));
 
+  /* — 图片 ALT — */
+  const imgs = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
+  const imgsWithoutAlt = imgs.filter((img) => {
+    const alt = img.match(/\salt="([^"]*)"/)?.[1];
+    return !alt?.trim();
+  });
+  check(`图片都有非空 alt ${path}`, imgsWithoutAlt.length === 0, imgsWithoutAlt[0] || '');
+
   /* — 结构化数据 — */
   const blocksLd = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   check(`有结构化数据 ${path}`, blocksLd.length > 0);

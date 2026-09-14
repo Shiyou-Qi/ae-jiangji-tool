@@ -7,12 +7,12 @@
  * public/brand/aeback-lockup.png 由官方原图处理而来：透明底、去掉了原图底部的
  * 那行 slogan（在 30px 的头部里会糊成一条），图形与字标一个像素都没改。
  */
-export default function Logo({ height = 30 }) {
+export default function Logo({ height = 30, alt = 'AEBack' }) {
   return (
     <img
       className="brand__mark"
       src="/brand/aeback-lockup.png"
-      alt=""
+      alt={alt}
       style={{ height }}
     />
   );
