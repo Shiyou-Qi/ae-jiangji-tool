@@ -297,6 +297,59 @@ const indexNowText = (await indexNowRes.text()).trim();
 check('IndexNow 密钥文件可访问', indexNowRes.status === 200, `实际 ${indexNowRes.status}`);
 check('IndexNow 密钥内容正确', indexNowText === INDEXNOW_KEY);
 
+/* ─────────── 12. Bing 已曝光热门查询覆盖 ─────────── */
+
+console.log('\n【12】热门查询覆盖');
+
+const queryCoverage = [
+  [
+    '/en',
+    [
+      'premiere pro downgrader',
+      'premiere project downgrader',
+      'aep downgrader online',
+    ],
+  ],
+  [
+    '/en/premiere-pro-downgrader',
+    [
+      'premiere pro downgrader',
+      'premiere project downgrader',
+      'premiere file downgrader',
+      'premier pro downgrader',
+    ],
+  ],
+  [
+    '/en/after-effects-downgrader',
+    [
+      'aep downgrader',
+      'aep-downgrader',
+      'aep downgrader online',
+      'after effects file downgrader',
+      'aep downgrade',
+    ],
+  ],
+  [
+    '/en/guide/downgrade-newer-after-effects-project',
+    ['how to downgrade after effects project'],
+  ],
+];
+
+for (const [path, phrases] of queryCoverage) {
+  const html = await (await fetch(`${SITE}${path}`, { cache: 'no-store' })).text();
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/g, ' ')
+    .replace(/<style[\s\S]*?<\/style>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
+  const searchable = `${html} ${text}`.toLowerCase();
+
+  for (const phrase of phrases) {
+    check(`${path} 覆盖查询「${phrase}」`, searchable.includes(phrase), phrase);
+  }
+}
+
 /* ─────────── 汇总 ─────────── */
 
 const total = pass + failures.length;

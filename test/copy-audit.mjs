@@ -59,7 +59,7 @@ const MUST_HAVE = [
   'Will it cost anything later?',
   'every converter is available right away',
   'Target version and outcome',
-  'After Effects conversions run in your browser and send no data',
+  'After Effects conversions run in your browser and do not send the project file to external services.',
 ];
 
 const MUST_NOT_HAVE = [
