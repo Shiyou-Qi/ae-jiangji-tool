@@ -16,7 +16,9 @@ const LEGACY_REDIRECTS = {
 };
 
 const FIXED_LEGACY_REDIRECTS = {
-  '/aep-jiangji': '/zh/after-effects-downgrader',
+  '/ae-jiangji': '/zh/guide/ae-jiangji',
+  '/aep-jiangji': '/zh/guide/ae-jiangji',
+  '/pr-jiangji': '/zh/guide/pr-jiangji',
 };
 
 function firstSegment(pathname) {

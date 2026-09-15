@@ -274,7 +274,9 @@ const legacyRedirects = [
   ['/en/open-aep-in-older-version', '/en/guide/old-adobe-version-open-project'],
   ['/ae-2026-to-2023', '/en/after-effects-downgrader/to/2023'],
   ['/aeback', '/en'],
-  ['/aep-jiangji', '/zh/after-effects-downgrader'],
+  ['/ae-jiangji', '/zh/guide/ae-jiangji'],
+  ['/aep-jiangji', '/zh/guide/ae-jiangji'],
+  ['/pr-jiangji', '/zh/guide/pr-jiangji'],
 ];
 
 for (const [from, to] of legacyRedirects) {
@@ -333,6 +335,14 @@ const queryCoverage = [
     '/en/guide/downgrade-newer-after-effects-project',
     ['how to downgrade after effects project'],
   ],
+  [
+    '/zh/guide/ae-jiangji',
+    ['AE降级', 'AE降级工具', 'AE工程降级', 'AEP降级', 'After Effects 降级'],
+  ],
+  [
+    '/zh/guide/pr-jiangji',
+    ['PR降级', 'PR降级工具', 'PR工程降级', 'prproj降级', 'Premiere Pro 降级'],
+  ],
 ];
 
 for (const [path, phrases] of queryCoverage) {
@@ -346,7 +356,7 @@ for (const [path, phrases] of queryCoverage) {
   const searchable = `${html} ${text}`.toLowerCase();
 
   for (const phrase of phrases) {
-    check(`${path} 覆盖查询「${phrase}」`, searchable.includes(phrase), phrase);
+    check(`${path} 覆盖查询「${phrase}」`, searchable.includes(phrase.toLowerCase()), phrase);
   }
 }
 

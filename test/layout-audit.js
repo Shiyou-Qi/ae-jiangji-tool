@@ -29,6 +29,8 @@ const PATHS = [
   // 长尾落地页：事实表与步骤条是独有的版式，窄屏最容易溢出，必须一起量
   '/zh/premiere-pro-downgrader/to/cs6',
   '/zh/guide/what-gets-lost',
+  '/zh/guide/ae-jiangji',
+  '/zh/guide/pr-jiangji',
 ];
 
 /** 这些元素的溢出是设计使然（内部可滚动，或已被 overflow 裁掉） */
