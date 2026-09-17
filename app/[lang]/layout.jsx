@@ -47,6 +47,12 @@ export default async function LangLayout({ children, params }) {
   return (
     <html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
       <body>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6661674805945311"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <Script id="microsoft-clarity" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
