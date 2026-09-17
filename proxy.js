@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { needsCanonicalOrigin, redirectOrigin } from './lib/canonical-origin.js';
 
 const LANGS = new Set(['zh', 'en']);
 const CHINESE_COUNTRIES = new Set(['CN', 'HK', 'MO', 'TW']);
@@ -16,6 +17,16 @@ const LEGACY_REDIRECTS = {
 };
 
 const FIXED_LEGACY_REDIRECTS = {
+  '/contact': '/zh/contact',
+  '/terms': '/zh/terms',
+  '/privacy': '/zh/privacy',
+  '/about': '/zh/how-it-works',
+  '/after-effects-di-banben-dakai': '/zh/guide/old-adobe-version-open-project',
+  '/ae-2025-to-2023': '/zh/after-effects-downgrader/to/2023',
+  '/ae-2025-to-2022': '/zh/after-effects-downgrader/to/2022',
+  '/en/aep-file-cannot-open': '/en/guide/project-version-too-new',
+  '/en/disclaimer': '/en/terms',
+  '/en/ae-2024-to-2022': '/en/after-effects-downgrader/to/2022',
   '/ae-jiangji': '/zh/guide/ae-jiangji',
   '/aep-jiangji': '/zh/guide/ae-jiangji',
   '/pr-jiangji': '/zh/guide/pr-jiangji',
@@ -82,16 +93,19 @@ export function proxy(request) {
         ? target
         : `/${preferredLang(request)}${target}`;
     const response = NextResponse.redirect(
-      `${request.nextUrl.origin}${targetPath}${request.nextUrl.search}`,
+      `${redirectOrigin(request.nextUrl)}${targetPath}${request.nextUrl.search}`,
       308
     );
     response.headers.set('Cache-Control', 'public, max-age=86400');
     return response;
   }
 
-  if (pathname.length > 1 && pathname.endsWith('/')) {
+  if (
+    LANGS.has(segment) &&
+    (needsCanonicalOrigin(request.nextUrl) || (pathname.length > 1 && pathname.endsWith('/')))
+  ) {
     const response = NextResponse.redirect(
-      `${request.nextUrl.origin}${normalized}${request.nextUrl.search}`,
+      `${redirectOrigin(request.nextUrl)}${normalized}${request.nextUrl.search}`,
       308
     );
     response.headers.set('Cache-Control', 'public, max-age=86400');
@@ -102,11 +116,13 @@ export function proxy(request) {
     return NextResponse.next();
   }
 
-  const url = request.nextUrl.clone();
   const lang = preferredLang(request);
-  url.pathname = pathname === '/' ? `/${lang}` : `/${lang}${pathname}`;
+  const targetPath = pathname === '/' ? `/${lang}` : `/${lang}${normalized}`;
 
-  const response = NextResponse.redirect(url, 307);
+  const response = NextResponse.redirect(
+    `${redirectOrigin(request.nextUrl)}${targetPath}${request.nextUrl.search}`,
+    307
+  );
   response.headers.set('Cache-Control', 'private, no-store');
   response.headers.set('Vary', 'Accept-Language, x-vercel-ip-country, cf-ipcountry');
   return response;

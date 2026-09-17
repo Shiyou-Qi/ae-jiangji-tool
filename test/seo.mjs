@@ -266,6 +266,16 @@ for (const p of bogus) {
 console.log('\n【10】旧链接永久跳转');
 
 const legacyRedirects = [
+  ['/contact', '/zh/contact'],
+  ['/terms', '/zh/terms'],
+  ['/privacy', '/zh/privacy'],
+  ['/about', '/zh/how-it-works'],
+  ['/after-effects-di-banben-dakai', '/zh/guide/old-adobe-version-open-project'],
+  ['/ae-2025-to-2023', '/zh/after-effects-downgrader/to/2023'],
+  ['/ae-2025-to-2022', '/zh/after-effects-downgrader/to/2022'],
+  ['/en/aep-file-cannot-open', '/en/guide/project-version-too-new'],
+  ['/en/disclaimer', '/en/terms'],
+  ['/en/ae-2024-to-2022', '/en/after-effects-downgrader/to/2022'],
   ['/en/aep-downgrader', '/en/after-effects-downgrader'],
   ['/en/ae-2026-to-2023', '/en/after-effects-downgrader/to/2023'],
   ['/en/ae-2025-to-2024', '/en/after-effects-downgrader/to/2024'],
